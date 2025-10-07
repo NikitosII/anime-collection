@@ -19,9 +19,9 @@ export const AnimeCard = ({ anime, onEdit, onDelete }) => {
   return (
     <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
       <div className="relative h-48 bg-gray-200">
-        {anime.imageUrl ? (
+        {anime.image ? ( 
           <img
-            src={`http://localhost:5123${anime.imageUrl}`}
+            src={`http://localhost:5123${anime.image}`} 
             alt={anime.title}
             className="w-full h-full object-cover"
           />

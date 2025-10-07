@@ -18,7 +18,22 @@ const handleResponse = async (response) => {
       if (errorText) {
         try {
           const errorData = JSON.parse(errorText);
-          errorMessage = errorData.message || errorData.title || errorMessage;
+          // Если это ошибка валидации с массивом errors
+          if (errorData.errors) {
+            const validationErrors = Object.values(errorData.errors).flat();
+            errorMessage = `Validation errors: ${validationErrors.join(', ')}`;
+          } 
+          // Если это строка с ошибкой
+          else if (typeof errorData === 'string') {
+            errorMessage = errorData;
+          }
+          // Если это объект с полем error
+          else if (errorData.error) {
+            errorMessage = errorData.error;
+          }
+          else {
+            errorMessage = errorText;
+          }
         } catch {
           errorMessage = errorText || errorMessage;
         }
@@ -30,7 +45,6 @@ const handleResponse = async (response) => {
     throw new Error(errorMessage);
   }
   
-  // Для пустых ответов 
   if (response.status === 204) {
     return { success: true };
   }
@@ -75,33 +89,51 @@ export const animeAPI = {
 
   // Создать новое аниме
   async createAnime(animeData) {
-    const url = `${API_BASE}/anime`;
-    console.log('Making POST request to:', url, animeData);
-    
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(animeData),
-    });
-    return handleResponse(response);
-  },
+        const url = `${API_BASE}/anime`;
+        console.log('Making POST request to:', url, animeData);
+        
+        // Используем Image вместо imageUrl
+        const requestData = {
+            Title: animeData.title,
+            Status: animeData.status,
+            Rating: animeData.rating,
+            Genres: animeData.genres,
+            Image: animeData.imageUrl || "" // Отправляем как Image
+        };
+        
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData),
+        });
+        return handleResponse(response);
+    },
 
   // Обновить аниме
   async updateAnime(id, animeData) {
-    const url = `${API_BASE}/anime/${id}`;
-    console.log('Making PUT request to:', url, animeData);
-    
-    const response = await fetch(url, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(animeData),
-    });
-    return handleResponse(response);
-  },
+        const url = `${API_BASE}/anime/${id}`;
+        console.log('Making PUT request to:', url, animeData);
+        
+        // Используем Image вместо imageUrl
+        const requestData = {
+            Title: animeData.title,
+            Status: animeData.status,
+            Rating: animeData.rating,
+            Genres: animeData.genres,
+            Image: animeData.imageUrl || "" // Отправляем как Image
+        };
+        
+        const response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData),
+        });
+        return handleResponse(response);
+    },
 
   // Удалить аниме
   async deleteAnime(id) {

@@ -10,7 +10,7 @@ export const AnimeForm = ({ anime, onSubmit, onCancel, onUploadImage }) => {
     status: 'Planned',
     rating: 0,
     genres: [],
-    imageUrl: '',
+    image: '',
   });
   const [customGenre, setCustomGenre] = useState('');
   const [uploading, setUploading] = useState(false);
@@ -23,10 +23,10 @@ export const AnimeForm = ({ anime, onSubmit, onCancel, onUploadImage }) => {
         status: anime.status,
         rating: anime.rating,
         genres: anime.genres || [],
-        imageUrl: anime.imageUrl || '',
+        imageUrl: anime.image || '',
       });
-      if (anime.imageUrl) {
-        setImagePreview(`http://localhost:5123${anime.imageUrl}`);
+      if (anime.image) {
+        setImagePreview(`http://localhost:5123${anime.image}`);
       }
     }
   }, [anime]);
@@ -49,7 +49,7 @@ export const AnimeForm = ({ anime, onSubmit, onCancel, onUploadImage }) => {
     setUploading(true);
     try {
       const imageUrl = await onUploadImage(file);
-      setFormData(prev => ({ ...prev, imageUrl }));
+      setFormData(prev => ({ ...prev, image: imageUrl }));
     } catch (error) {
       alert('Failed to upload image: ' + error.message);
       setImagePreview('');
@@ -59,7 +59,7 @@ export const AnimeForm = ({ anime, onSubmit, onCancel, onUploadImage }) => {
   };
 
   const removeImage = () => {
-    setFormData(prev => ({ ...prev, imageUrl: '' }));
+    setFormData(prev => ({ ...prev, image: '' }));
     setImagePreview('');
   };
 
