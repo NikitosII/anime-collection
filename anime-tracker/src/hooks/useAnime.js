@@ -21,15 +21,38 @@ export const useAnime = () => {
         page: filters.page || pagination.page,
         pageSize: pagination.pageSize,
       };
-      const data = await animeAPI.getAnime(params);
-      setAnimes(data.data || []);
+
+      console.log('Fetching anime with params:', params);
+      const response = await animeAPI.getAnime(params);
+      console.log(' API response:', response);
+
+      // Обрабатываем разные форматы ответа
+      let animeList = [];
+      let totalCount = 0;
+
+      if (Array.isArray(response)) {
+        // Если ответ - массив (старый формат)
+        animeList = response;
+        totalCount = response.length;
+      } else if (response.data && Array.isArray(response.data)) {
+        // Если ответ имеет поле data (новый формат)
+        animeList = response.data;
+        totalCount = response.totalCount || response.data.length;
+      } else {
+        console.error('Unexpected response format:', response);
+        throw new Error('Unexpected response format from server');
+      }
+
+      console.log('Processed anime list:', animeList);
+      setAnimes(animeList);
       setPagination(prev => ({
         ...prev,
-        page: data.page || 1,
-        totalCount: data.totalCount || 0,
-        totalPages: data.totalPages || 0,
+        page: response.page || 1,
+        totalCount: totalCount,
+        totalPages: response.totalPages || Math.ceil(totalCount / (params.pageSize || prev.pageSize)),
       }));
     } catch (err) {
+      console.error('Error fetching anime:', err);
       setError(err.message);
       setAnimes([]);
     } finally {

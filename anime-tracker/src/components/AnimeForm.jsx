@@ -26,7 +26,10 @@ export const AnimeForm = ({ anime, onSubmit, onCancel, onUploadImage }) => {
         imageUrl: anime.image || '',
       });
       if (anime.image) {
-        setImagePreview(`http://localhost:5123${anime.image}`);
+        const fullImageUrl = anime.image.startsWith('http')
+          ? anime.image
+          : `http://localhost:5123${anime.image}`;
+        setImagePreview(fullImageUrl);
       }
     }
   }, [anime]);
@@ -48,9 +51,23 @@ export const AnimeForm = ({ anime, onSubmit, onCancel, onUploadImage }) => {
 
     setUploading(true);
     try {
-      const imageUrl = await onUploadImage(file);
+      const result = await onUploadImage(file);
+      console.log('Upload result:', result);
+
+      // Обрабатываем разные форматы ответа
+      let imageUrl = '';
+      if (typeof result === 'string') {
+        imageUrl = result;
+      } else if (result && result.imageUrl) {
+        imageUrl = result.imageUrl;
+      } else if (result && result.Image) {
+        imageUrl = result.Image;
+      }
+
+      console.log('Final image URL:', imageUrl);
       setFormData(prev => ({ ...prev, image: imageUrl }));
     } catch (error) {
+      console.error('Upload error:', error);
       alert('Failed to upload image: ' + error.message);
       setImagePreview('');
     } finally {
@@ -91,6 +108,7 @@ export const AnimeForm = ({ anime, onSubmit, onCancel, onUploadImage }) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Anime Image
@@ -114,7 +132,7 @@ export const AnimeForm = ({ anime, onSubmit, onCancel, onUploadImage }) => {
               />
             </label>
           </div>
-          
+
           {imagePreview && (
             <div className="relative">
               <img
@@ -190,7 +208,7 @@ export const AnimeForm = ({ anime, onSubmit, onCancel, onUploadImage }) => {
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Genres
         </label>
-        
+
         <div className="grid grid-cols-2 gap-2 mb-3">
           {GENRE_OPTIONS.map(genre => (
             <label key={genre} className="flex items-center space-x-2">

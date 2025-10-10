@@ -154,11 +154,27 @@ export const animeAPI = {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await fetch(url, {
-      method: 'POST',
-      body: formData,
-    });
-    
-    return handleResponse(response);
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            body: formData,
+        });
+        
+        const result = await handleResponse(response);
+        console.log('Upload response result:', result);
+        
+        // Обрабатываем разные возможные форматы ответа
+        if (result && (result.imageUrl || result.Image)) {
+            return result.imageUrl || result.Image;
+        } else if (typeof result === 'string') {
+            return result;
+        } else {
+            console.error('Unexpected upload response format:', result);
+            throw new Error('Unexpected response format from server');
+        }
+    } catch (error) {
+        console.error('Upload error in api.js:', error);
+        throw error;
+    }
   },
 };

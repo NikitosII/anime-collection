@@ -9,6 +9,8 @@ export const AnimeList = ({
   onEditAnime,
   onDeleteAnime 
 }) => {
+  console.log('AnimeList render - animes:', animes, 'loading:', loading, 'error:', error);
+  
   if (error) {
     return (
       <div className="text-center py-8">

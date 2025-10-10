@@ -16,16 +16,39 @@ const StatusBadge = ({ status }) => {
 };
 
 export const AnimeCard = ({ anime, onEdit, onDelete }) => {
+  const getImageUrl = () => {
+    if (!anime.image) return null;
+
+    // Если это полный URL, используем как есть
+    if (anime.image.startsWith('http')) {
+      return anime.image;
+    }
+
+    // Если это относительный путь, добавляем базовый URL
+    if (anime.image.startsWith('/')) {
+      return `http://localhost:5123${anime.image}`;
+    }
+
+    // Если это просто имя файла, добавляем путь к папке images
+    return `http://localhost:5123/images/${anime.image}`;
+  };
+
+  const imageUrl = getImageUrl();
   return (
     <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
       <div className="relative h-48 bg-gray-200">
-        {anime.image ? ( 
+        {imageUrl ? (
           <img
-            src={`http://localhost:5123${anime.image}`} 
+            src={imageUrl}
             alt={anime.title}
             className="w-full h-full object-cover"
+            onError={(e) => {
+              console.error('Failed to load image:', imageUrl);
+              e.target.style.display = 'none';
+            }}
           />
-        ) : (
+        ) : null}
+        {!imageUrl && (
           <div className="w-full h-full flex items-center justify-center text-gray-400">
             <ImageIcon size={48} />
           </div>
