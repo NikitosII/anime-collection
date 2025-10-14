@@ -16,7 +16,7 @@ export const useAnime = () => {
     setLoading(true);
     setError(null);
     try {
-      const Params = {
+      const backendParams = {
         Search: filters.Search || filters.search || filters.title || '',
         SortBy: filters.SortBy || filters.sortBy || 'title',
         SortDesc: filters.SortDesc || filters.sortDesc || false,
@@ -24,7 +24,7 @@ export const useAnime = () => {
         Count: filters.Count || filters.pageSize || pagination.pageSize,
       };
 
-      const response = await animeAPI.getAnime(Params);
+      const response = await animeAPI.getAnime(backendParams);
       console.log('API response:', response);
 
       // Обрабатываем ответ в формате PaginResponse

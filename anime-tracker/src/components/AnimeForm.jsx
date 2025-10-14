@@ -28,7 +28,7 @@ export const AnimeForm = ({ anime, onSubmit, onCancel, onUploadImage }) => {
       if (anime.image) {
         const fullImageUrl = anime.image.startsWith('http')
           ? anime.image
-          : `http://localhost:5123${anime.image}`;
+          : `http://localhost:5123${anime.image.startsWith('/') ? anime.image : '/' + anime.image}`;
         setImagePreview(fullImageUrl);
       }
     }
@@ -64,14 +64,18 @@ export const AnimeForm = ({ anime, onSubmit, onCancel, onUploadImage }) => {
         imageUrl = result.Image;
       }*/
 
-      setFormData(prev => ({ 
-        ...prev, 
-        image: imageUrl  
-      }));
+      setFormData(prev => {
+        const updated = { 
+          ...prev, 
+          image: imageUrl
+        };
+        return updated;
+      });
     } catch (error) {
       console.error('Upload error:', error);
       alert('Failed to upload image: ' + error.message);
       setImagePreview('');
+      event.target.value = '';
     } finally {
       setUploading(false);
     }
