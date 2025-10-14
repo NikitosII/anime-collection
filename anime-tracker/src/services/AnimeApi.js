@@ -18,16 +18,16 @@ const handleResponse = async (response) => {
       if (errorText) {
         try {
           const errorData = JSON.parse(errorText);
-          // Если это ошибка валидации с массивом errors
+          // ошибка валидации с массивом errors
           if (errorData.errors) {
             const validationErrors = Object.values(errorData.errors).flat();
             errorMessage = `Validation errors: ${validationErrors.join(', ')}`;
           }
-          // Если это строка с ошибкой
+          // строка с ошибкой
           else if (typeof errorData === 'string') {
             errorMessage = errorData;
           }
-          // Если это объект с полем error
+          // объект с полем error
           else if (errorData.error) {
             errorMessage = errorData.error;
           }
@@ -100,7 +100,7 @@ export const animeAPI = {
       Status: animeData.status,
       Rating: animeData.rating,
       Genres: animeData.genres,
-      Image: animeData.imageUrl || "" // Отправляем как Image
+      Image: animeData.image || "" 
     };
 
     const response = await fetch(url, {
@@ -123,7 +123,7 @@ export const animeAPI = {
       Status: animeData.status,
       Rating: animeData.rating,
       Genres: animeData.genres,
-      Image: animeData.imageUrl || "" 
+      Image: animeData.image || "" 
     };
 
     const response = await fetch(url, {

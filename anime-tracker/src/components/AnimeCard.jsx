@@ -21,23 +21,27 @@ export const AnimeCard = ({ anime, onEdit, onDelete }) => {
       console.log('No image for anime:', anime.title);
       return null;
     }
-    
+
     let imageUrl = anime.image;
-    
-    // Если путь не начинается с /, добавляем его
-    if (!imageUrl.startsWith('/')) {
-      imageUrl = `/${imageUrl}`;
+
+    if (imageUrl.startsWith('http')) {
+      return imageUrl;
     }
-    
-    // Убедимся, что путь начинается с /images/
-    if (!imageUrl.startsWith('/images/')) {
-      imageUrl = `/images${imageUrl}`;
+
+    // Если начинается с /
+    if (imageUrl.startsWith('/')) {
+      return `http://localhost:5123${imageUrl}`;
     }
-    
-    // Создаем полный URL
-    const fullUrl = `http://localhost:5123${imageUrl}`;
+
+    // добавляем /images/ если нужно
+    if (!imageUrl.startsWith('images/')) {
+      imageUrl = `images/${imageUrl}`;
+    }
+
+    // полный URL
+    const fullUrl = `http://localhost:5123/${imageUrl}`;
     console.log('Image URL for', anime.title, ':', fullUrl);
-    
+
     return fullUrl;
   };
 
@@ -53,7 +57,8 @@ export const AnimeCard = ({ anime, onEdit, onDelete }) => {
             onError={(e) => {
               console.error('Failed to load image:', imageUrl);
               e.target.style.display = 'none';
-              e.target.nextSibling.style.display = 'flex';
+              const placeholder = e.target.parentElement.querySelector('.image-placeholder');
+              if (placeholder) placeholder.style.display = 'flex';
             }}
           />
         ) : null}

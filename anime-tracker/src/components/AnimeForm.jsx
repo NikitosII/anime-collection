@@ -23,7 +23,7 @@ export const AnimeForm = ({ anime, onSubmit, onCancel, onUploadImage }) => {
         status: anime.status,
         rating: anime.rating,
         genres: anime.genres || [],
-        imageUrl: anime.image || '',
+        image: anime.image || '',
       });
       if (anime.image) {
         const fullImageUrl = anime.image.startsWith('http')
@@ -51,21 +51,23 @@ export const AnimeForm = ({ anime, onSubmit, onCancel, onUploadImage }) => {
 
     setUploading(true);
     try {
-      const result = await onUploadImage(file);
-      console.log('Upload result:', result);
+      const imageUrl = await onUploadImage(file);
+      console.log('Upload result:', imageUrl);
 
       // Обрабатываем разные форматы ответа
-      let imageUrl = '';
+      /*let imageUrl = '';
       if (typeof result === 'string') {
         imageUrl = result;
       } else if (result && result.imageUrl) {
         imageUrl = result.imageUrl;
       } else if (result && result.Image) {
         imageUrl = result.Image;
-      }
+      }*/
 
-      console.log('Final image URL:', imageUrl);
-      setFormData(prev => ({ ...prev, image: imageUrl }));
+      setFormData(prev => ({ 
+        ...prev, 
+        image: imageUrl  
+      }));
     } catch (error) {
       console.error('Upload error:', error);
       alert('Failed to upload image: ' + error.message);
