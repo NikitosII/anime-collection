@@ -17,20 +17,28 @@ const StatusBadge = ({ status }) => {
 
 export const AnimeCard = ({ anime, onEdit, onDelete }) => {
   const getImageUrl = () => {
-    if (!anime.image) return null;
-
-    // Если это полный URL, используем как есть
-    if (anime.image.startsWith('http')) {
-      return anime.image;
+    if (!anime.image || anime.image.trim() === '') {
+      console.log('No image for anime:', anime.title);
+      return null;
     }
-
-    // Если это относительный путь, добавляем базовый URL
-    if (anime.image.startsWith('/')) {
-      return `http://localhost:5123${anime.image}`;
+    
+    let imageUrl = anime.image;
+    
+    // Если путь не начинается с /, добавляем его
+    if (!imageUrl.startsWith('/')) {
+      imageUrl = `/${imageUrl}`;
     }
-
-    // Если это просто имя файла, добавляем путь к папке images
-    return `http://localhost:5123/images/${anime.image}`;
+    
+    // Убедимся, что путь начинается с /images/
+    if (!imageUrl.startsWith('/images/')) {
+      imageUrl = `/images${imageUrl}`;
+    }
+    
+    // Создаем полный URL
+    const fullUrl = `http://localhost:5123${imageUrl}`;
+    console.log('Image URL for', anime.title, ':', fullUrl);
+    
+    return fullUrl;
   };
 
   const imageUrl = getImageUrl();
@@ -45,6 +53,7 @@ export const AnimeCard = ({ anime, onEdit, onDelete }) => {
             onError={(e) => {
               console.error('Failed to load image:', imageUrl);
               e.target.style.display = 'none';
+              e.target.nextSibling.style.display = 'flex';
             }}
           />
         ) : null}

@@ -7,7 +7,7 @@ export const useAnime = () => {
   const [error, setError] = useState(null);
   const [pagination, setPagination] = useState({
     page: 1,
-    pageSize: 12,
+    pageSize: 10,
     totalCount: 0,
     totalPages: 0,
   });
@@ -16,41 +16,33 @@ export const useAnime = () => {
     setLoading(true);
     setError(null);
     try {
-      const params = {
-        ...filters,
-        page: filters.page || pagination.page,
-        pageSize: pagination.pageSize,
+      const Params = {
+        Search: filters.Search || filters.search || filters.title || '',
+        SortBy: filters.SortBy || filters.sortBy || 'title',
+        SortDesc: filters.SortDesc || filters.sortDesc || false,
+        Page: filters.Page || filters.page || pagination.page,
+        Count: filters.Count || filters.pageSize || pagination.pageSize,
       };
 
-      console.log('Fetching anime with params:', params);
-      const response = await animeAPI.getAnime(params);
-      console.log(' API response:', response);
+      const response = await animeAPI.getAnime(Params);
+      console.log('API response:', response);
 
-      // Обрабатываем разные форматы ответа
-      let animeList = [];
-      let totalCount = 0;
+      // Обрабатываем ответ в формате PaginResponse
+      if (response && response.data && Array.isArray(response.data)) {
+        const animeList = response.data;
+        console.log('Processed anime list:', animeList);
 
-      if (Array.isArray(response)) {
-        // Если ответ - массив (старый формат)
-        animeList = response;
-        totalCount = response.length;
-      } else if (response.data && Array.isArray(response.data)) {
-        // Если ответ имеет поле data (новый формат)
-        animeList = response.data;
-        totalCount = response.totalCount || response.data.length;
+        setAnimes(animeList);
+        setPagination(prev => ({
+          ...prev,
+          page: response.page || backendParams.Page,
+          totalCount: response.totalCount || 0,
+          totalPages: response.totalPages || 1,
+        }));
       } else {
         console.error('Unexpected response format:', response);
         throw new Error('Unexpected response format from server');
       }
-
-      console.log('Processed anime list:', animeList);
-      setAnimes(animeList);
-      setPagination(prev => ({
-        ...prev,
-        page: response.page || 1,
-        totalCount: totalCount,
-        totalPages: response.totalPages || Math.ceil(totalCount / (params.pageSize || prev.pageSize)),
-      }));
     } catch (err) {
       console.error('Error fetching anime:', err);
       setError(err.message);
@@ -58,6 +50,14 @@ export const useAnime = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const searchAnime = async (searchTerm) => {
+    console.log('🔍 Searching for:', searchTerm);
+    await fetchAnime({
+      Search: searchTerm,
+      Page: 1, // Сбрасываем на первую страницу при поиске
+    });
   };
 
   const createAnime = async (animeData) => {
@@ -112,6 +112,7 @@ export const useAnime = () => {
     error,
     pagination,
     fetchAnime,
+    searchAnime,
     createAnime,
     updateAnime,
     deleteAnime,
