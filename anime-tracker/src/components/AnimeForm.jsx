@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Upload, X } from 'lucide-react';
 
 const STATUS_OPTIONS = ['Planned', 'Watching', 'Completed', 'Dropped'];
-const GENRE_OPTIONS = ['Action', 'Adventure', 'Comedy', 'Drama', 'Fantasy', 'Horror', 'Romance', 'Sci-Fi', 'Slice of Life', 'Thriller'];
+const GENRE_OPTIONS = ['Action', 'Adventure', 'Comedy', 'Drama', 'Fantasy', 'Horror', 'Romance', ' Isekai', 'Mundanity', 'Thriller'];
 
 export const AnimeForm = ({ anime, onSubmit, onCancel, onUploadImage }) => {
   const [formData, setFormData] = useState({

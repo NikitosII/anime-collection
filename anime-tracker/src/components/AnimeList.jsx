@@ -38,7 +38,7 @@ export const AnimeList = ({
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">My Anime Collection</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Collection</h2>
           <p className="text-gray-600">
             {animes.length} anime found
           </p>
