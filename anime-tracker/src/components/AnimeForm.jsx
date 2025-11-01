@@ -51,26 +51,13 @@ export const AnimeForm = ({ anime, onSubmit, onCancel, onUploadImage }) => {
 
     setUploading(true);
     try {
-      const imageUrl = await onUploadImage(file);
-      console.log('Upload result:', imageUrl);
+      const imagePath = await onUploadImage(file);
+      console.log('Upload completed, imagePath:', imagePath);
 
-      // Обрабатываем разные форматы ответа
-      /*let imageUrl = '';
-      if (typeof result === 'string') {
-        imageUrl = result;
-      } else if (result && result.imageUrl) {
-        imageUrl = result.imageUrl;
-      } else if (result && result.Image) {
-        imageUrl = result.Image;
-      }*/
-
-      setFormData(prev => {
-        const updated = { 
-          ...prev, 
-          image: imageUrl
-        };
-        return updated;
-      });
+      setFormData(prev => ({
+        ...prev,
+        image: imagePath  
+      }));
     } catch (error) {
       console.error('Upload error:', error);
       alert('Failed to upload image: ' + error.message);
@@ -84,6 +71,8 @@ export const AnimeForm = ({ anime, onSubmit, onCancel, onUploadImage }) => {
   const removeImage = () => {
     setFormData(prev => ({ ...prev, image: '' }));
     setImagePreview('');
+    const fileInput = document.querySelector('input[type="file"]');
+    if (fileInput) fileInput.value = '';
   };
 
   const handleGenreToggle = (genre) => {

@@ -48,7 +48,7 @@ export const AnimeCard = ({ anime, onEdit, onDelete }) => {
   const imageUrl = getImageUrl();
   return (
     <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
-      <div className="relative h-48 bg-gray-200">
+      <div className="relative h-64 bg-gray-200">
         {imageUrl ? (
           <img
             src={imageUrl}

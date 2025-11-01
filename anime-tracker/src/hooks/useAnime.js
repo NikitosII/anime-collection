@@ -94,8 +94,8 @@ export const useAnime = () => {
 
   const uploadImage = async (file) => {
     try {
-      const result = await animeAPI.uploadImage(file);
-      return result.imageUrl;
+      const imagePath = await animeAPI.uploadImage(file);
+      return imagePath;
     } catch (err) {
       setError(err.message);
       throw err;

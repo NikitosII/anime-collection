@@ -70,7 +70,6 @@ export const animeAPI = {
       }
     });
 
-    // Используем правильный endpoint для фильтрации
     const url = `${API_BASE}/anime/filter?${queryParams}`;
     console.log('Making GET request to:', url);
     console.log('Query params:', Object.fromEntries(queryParams));
@@ -94,13 +93,12 @@ export const animeAPI = {
     const url = `${API_BASE}/anime`;
     console.log('Making POST request to:', url, animeData);
 
-    // Используем Image вместо imageUrl
     const requestData = {
       Title: animeData.title,
       Status: animeData.status,
       Rating: animeData.rating,
       Genres: animeData.genres,
-      Image: animeData.image || "" 
+      Image: animeData.image || ""
     };
 
     const response = await fetch(url, {
@@ -123,7 +121,7 @@ export const animeAPI = {
       Status: animeData.status,
       Rating: animeData.rating,
       Genres: animeData.genres,
-      Image: animeData.image || "" 
+      Image: animeData.image || ""
     };
 
     const response = await fetch(url, {
@@ -164,11 +162,15 @@ export const animeAPI = {
       const result = await handleResponse(response);
       console.log('Upload response result:', result);
 
-      // Обрабатываем разные возможные форматы ответа
-      if (result && (result.imageUrl || result.Image)) {
-        return result.imageUrl || result.Image;
-      } else if (typeof result === 'string') {
+      // форматы ответа
+      if (typeof result === 'string') {
         return result;
+      } else if (result.imageUrl) {
+        return result.imageUrl;
+      } else if (result.Image) {
+        return result.Image;
+      } else if (result.image) {
+        return result.image;
       } else {
         console.error('Unexpected upload response format:', result);
         throw new Error('Unexpected response format from server');
